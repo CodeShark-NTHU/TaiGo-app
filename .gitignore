@@ -1,0 +1,4 @@
+.pryrc/
+.vscode/
+temp/
+config/secrets.yml
