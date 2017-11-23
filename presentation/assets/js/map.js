@@ -16,8 +16,8 @@ var Map = function() {
     var nav = new mapboxgl.NavigationControl();
     this.map.addControl(nav, 'top-left');
     var mapControlElement = document.getElementsByClassName('mapboxgl-ctrl');
-    mapControlElement[0].style.margin = "100px 0 0 10px";
-  
+    mapControlElement[0].style.margin = "100px 0 0 12px";
+
 
   }
 
