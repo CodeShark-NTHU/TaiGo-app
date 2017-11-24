@@ -11,10 +11,19 @@ html
       rel="stylesheet" integrity="sha384-pVJelSCJ58Og1XDc2E95RVYHZDPb9AVyXsI8NoVpB2xmtxoZKJePbMfE4mlXw7BJ"
       crossorigin="anonymous"
     }
+    link {
+      href="https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css"
+      rel="stylesheet" 
+    }
     / Custom CSS
     / link rel='stylesheet' href='/presentation/assets/css/style.css'
     == assets(:css)
+   
+    
+   
   body
+    == yield
+    
     / JQuery and Bootstrap JS
     script{ 
       src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -27,15 +36,9 @@ html
       crossorigin="anonymous"
     }
 
-    .container id='html_body'
-      section
-        .row style="vertical-align: middle;"
-          .col-xs-12
-            h1 
-              a href="/" TaiGo::Hsinchu
-
-      section
-        == yield
-
-      footer
-        = "TaiGo is made for demonstration purposes. We cannot warrant full correctness of all content. TaiGo uses cookies but does not track users or record behavior."
+    script{ 
+      src="https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js"
+    }
+    
+    == assets(:js)
+    
