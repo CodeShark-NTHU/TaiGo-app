@@ -90,10 +90,10 @@ body {
   /*background: rgba(50, 50, 50, 0.5); */
   z-index:10;
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0+0,1+100 */
-  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+  background: -moz-linear-gradient(top, rgba(0,0,0,0) 3%, rgba(0,0,0,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0) 3%,rgba(0,0,0,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 3%,rgba(0,0,0,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000',GradientType=0 ); /* IE6-9 */
 
 }
 
@@ -106,12 +106,12 @@ body {
 #destination-wrapper h4 {
   font-weight: bold;
   margin-bottom:2px;
-  color:#333;
+  color:#fff;
   text-shadow: -1px -1px 2px rgba(150, 150, 150, 1);
 }
 #destination-wrapper span {
   font-size:12pt;
-  color:#999;
+  color:#e3e3e3;
   padding:0 5px;
 }
 
@@ -128,11 +128,11 @@ body {
 .item-slider .slider-section a{
   display: inline-block;
   padding:0 10px;
-  color:#888
+  color: #e0dde0;
 }
 
 .item-slider .slider-section a.active, .item-slider .slider-section a:hover{
-  color:black;
+  color:white;
   font-weight: 400;
 }
  
