@@ -1,5 +1,5 @@
 var Map = function() {
-  var initialize = function() {
+  var _initialize = function() {
     var access_token = "pk.eyJ1IjoicHJvZG94eCIsImEiOiJjamFjYzM1MGYxZzZrMzNudTFoYmp4cXN4In0.fDeon8IaR7QXPZT-JqZScQ";
     mapboxgl.accessToken = access_token;
     var defaultCenter = [120.98842664533413, 24.804349124963082];
@@ -18,11 +18,72 @@ var Map = function() {
     var mapControlElement = document.getElementsByClassName('mapboxgl-ctrl');
     mapControlElement[0].style.margin = "100px 0 0 12px";
 
+    //Initialize Geocoder
+    /*this.geocoder = new MapboxGeocoder({
+      accessToken: access_token,
+      zoom: 16,
+      country: "tw",
+      types: "postcode,district,place,locality,neighborhood,address,poi"
+    });
+    
+    this.map.addControl(this.geocoder); */
+
+    this.geocoder = new google.maps.Geocoder();
+
+   
+  }
+
+  var _addMarker = function(coord){
+    /*var marker = {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7f201e",
+        "marker-size": "medium",
+        "marker-symbol": "music",
+        "type": "journey-step",
+        "previous": "1",
+        "current": "2",
+        "next": "3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [coord.lat,
+          cord.lng
+        ]
+      }
+    }; */
+    
+    var pos = new mapboxgl.LngLat(coord.lng(), coord.lat());
+
+    new mapboxgl.Marker()
+    .setLngLat(pos)
+    .addTo(this.map); 
+
+
 
   }
 
+  var _geocodeAddress = function(address, callback) {
+    this.geocoder.geocode({'address': address}, function(results, status) {
+      if (status === 'OK') {
+        /*resultsMap.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+          map: resultsMap,
+          position: results[0].geometry.location
+        }); */
+        callback(results);
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
+
+
+
   return {
-    init: initialize
+    init: _initialize,
+    geocodeAddress: _geocodeAddress,
+    addMarker: _addMarker
   };
 }();
 
