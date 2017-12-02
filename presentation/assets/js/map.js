@@ -34,30 +34,121 @@ var Map = function() {
   }
 
   var _addMarker = function(coord){
-    /*var marker = {
-      "type": "Feature",
-      "properties": {
-        "marker-color": "#7f201e",
-        "marker-size": "medium",
-        "marker-symbol": "music",
-        "type": "journey-step",
-        "previous": "1",
-        "current": "2",
-        "next": "3"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [coord.lat,
-          cord.lng
-        ]
-      }
-    }; */
+
+    // Markers
+	/*this.map.on('style.load', function() {
+		this.map.addSource("markers", {
+			"type": "geojson",
+			"data": {
+				"type": "FeatureCollection",
+				"features": [{
+					"type": "Feature",
+					"geometry": {
+						"type": "Point",
+						"coordinates": [coord.lng(), coord.lat()]
+					},
+					"properties": {
+						"title": "Ipsum",
+						'marker-color': '#3bb2d0',
+            'marker-size': 'large',
+            'marker-symbol': 'rocket'
+					}
+				}, {
+					"type": "Feature",
+					"geometry": {
+						"type": "Point",
+						"coordinates": [coord.lng(), coord.lat()]
+					},
+					"properties": {
+						"title": "Ipsum",
+						'marker-color': '#3bb2d0',
+            'marker-size': 'large',
+            'marker-symbol': 'rocket'
+					}
+				}]
+			}
+		});
+
+		this.map.addLayer({
+			"id": "markers",
+			"type": "symbol",
+			"source": "markers",
+			"layout": {
+				"icon-image": "{marker-symbol}",
+				"text-field": "{title}",
+				"text-font": "Open Sans Semibold, Arial Unicode MS Bold",
+				"text-offset": [0, 0.6],
+				"text-anchor": "top"
+			},
+			"paint": {
+				"text-size": 14
+			}
+		});
+	}); */
+
     
-    var pos = new mapboxgl.LngLat(coord.lng(), coord.lat());
+    /*var pos = new mapboxgl.LngLat(coord.lng(), coord.lat());
 
     new mapboxgl.Marker()
     .setLngLat(pos)
-    .addTo(this.map); 
+    .addTo(this.map);  */
+
+   /* var markerSource = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [coord.lng(), coord.lat()]
+      },
+      properties: {
+        title: 'Mapbox SF',
+        description: '155 9th St, San Francisco',
+        'marker-color': '#3bb2d0',
+        'marker-size': 'large',
+        'marker-symbol': 'rocket'
+      }
+
+    };
+    var _this = this;
+
+    _this.map.addSource('destMarker', markerSource);
+
+    map.addLayer({
+			"id": "destMarker",
+			"type": "symbol",
+			"source": "markers",
+			"layout": {
+				"icon-image": "{marker-symbol}",
+				"text-field": "{title}",
+				"text-font": "Open Sans Semibold, Arial Unicode MS Bold",
+				"text-offset": [0, 0.6],
+				"text-anchor": "top"
+			},
+			"paint": {
+				"text-size": 14
+			}
+		}); */
+
+
+    /*new mapboxgl.Marker()
+    .setLngLat(marker.geometry.coordinates)
+    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+    .addTo(map)*/
+
+    var _this = this;
+
+    // create a HTML element for each feature
+    var el = document.createElement('div');
+    el.innerHTML = '<div class="pin"></div>';
+
+    new mapboxgl.Marker(el)
+    .setLngLat([coord.lng(), coord.lat()])
+    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+    .setHTML('<h3>' +"Stuff"+ '</h3><p>' + "Stuff" + '</p>'))
+    .addTo(_this.map);
+
+    console.log("Should add marker!");
+    //this.map.addSource(marker); */
 
 
 
