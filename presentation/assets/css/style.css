@@ -223,6 +223,7 @@ body {
 }
 
 
+
 /* Marker */
 .pin {
   width: 30px;
@@ -246,5 +247,20 @@ body {
   position: absolute;
   border-radius: 50%;
 }
+
+.markerPopup {
+  width:100px;
+}
+
+.markerPopup > .title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.markerPopup > .body {
+  font-weight:200;
+  margin:3px 0;
+}
+
 
 

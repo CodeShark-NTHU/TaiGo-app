@@ -18,140 +18,43 @@ var Map = function() {
     var mapControlElement = document.getElementsByClassName('mapboxgl-ctrl');
     mapControlElement[0].style.margin = "100px 0 0 12px";
 
-    //Initialize Geocoder
-    /*this.geocoder = new MapboxGeocoder({
-      accessToken: access_token,
-      zoom: 16,
-      country: "tw",
-      types: "postcode,district,place,locality,neighborhood,address,poi"
-    });
-    
-    this.map.addControl(this.geocoder); */
-
     this.geocoder = new google.maps.Geocoder();
+    this.placeService = new google.maps.places.PlacesService(document.createElement('div'));
 
    
   }
-
-  var _addMarker = function(coord){
-
-    // Markers
-	/*this.map.on('style.load', function() {
-		this.map.addSource("markers", {
-			"type": "geojson",
-			"data": {
-				"type": "FeatureCollection",
-				"features": [{
-					"type": "Feature",
-					"geometry": {
-						"type": "Point",
-						"coordinates": [coord.lng(), coord.lat()]
-					},
-					"properties": {
-						"title": "Ipsum",
-						'marker-color': '#3bb2d0',
-            'marker-size': 'large',
-            'marker-symbol': 'rocket'
-					}
-				}, {
-					"type": "Feature",
-					"geometry": {
-						"type": "Point",
-						"coordinates": [coord.lng(), coord.lat()]
-					},
-					"properties": {
-						"title": "Ipsum",
-						'marker-color': '#3bb2d0',
-            'marker-size': 'large',
-            'marker-symbol': 'rocket'
-					}
-				}]
-			}
-		});
-
-		this.map.addLayer({
-			"id": "markers",
-			"type": "symbol",
-			"source": "markers",
-			"layout": {
-				"icon-image": "{marker-symbol}",
-				"text-field": "{title}",
-				"text-font": "Open Sans Semibold, Arial Unicode MS Bold",
-				"text-offset": [0, 0.6],
-				"text-anchor": "top"
-			},
-			"paint": {
-				"text-size": 14
-			}
-		});
-	}); */
-
-    
-    /*var pos = new mapboxgl.LngLat(coord.lng(), coord.lat());
-
-    new mapboxgl.Marker()
-    .setLngLat(pos)
-    .addTo(this.map);  */
-
-   /* var markerSource = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [coord.lng(), coord.lat()]
-      },
-      properties: {
-        title: 'Mapbox SF',
-        description: '155 9th St, San Francisco',
-        'marker-color': '#3bb2d0',
-        'marker-size': 'large',
-        'marker-symbol': 'rocket'
-      }
-
-    };
-    var _this = this;
-
-    _this.map.addSource('destMarker', markerSource);
-
-    map.addLayer({
-			"id": "destMarker",
-			"type": "symbol",
-			"source": "markers",
-			"layout": {
-				"icon-image": "{marker-symbol}",
-				"text-field": "{title}",
-				"text-font": "Open Sans Semibold, Arial Unicode MS Bold",
-				"text-offset": [0, 0.6],
-				"text-anchor": "top"
-			},
-			"paint": {
-				"text-size": 14
-			}
-		}); */
-
-
-    /*new mapboxgl.Marker()
-    .setLngLat(marker.geometry.coordinates)
-    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-    .addTo(map)*/
+  /*
+    Options: 
+    @coord: [lng,lat]
+    @color: hex color 
+    @size: optional px value
+    @popupTemplate: html
+  */
+  var _addMarker = function(options){
 
     var _this = this;
+    _.defaults(options, {size: 30, color: "#89849b", popupTemplate: ""});
 
     // create a HTML element for each feature
     var el = document.createElement('div');
-    el.innerHTML = '<div class="pin"></div>';
+    el.innerHTML = '<div style="background: '+ options.color + '; width:' + options.size + 'px; height:' + options.size + 'px; "  class="pin"></div>';
 
     new mapboxgl.Marker(el)
-    .setLngLat([coord.lng(), coord.lat()])
+    .setLngLat(options.coord)
     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-    .setHTML('<h3>' +"Stuff"+ '</h3><p>' + "Stuff" + '</p>'))
+    .setHTML(options.popupTemplate) )
     .addTo(_this.map);
 
-    console.log("Should add marker!");
-    //this.map.addSource(marker); */
+    
+  }
 
-
-
+  var _getPlaceDetails = function(placeID, callback) {
+    this.placeService.getDetails({
+      placeId: placeID
+    }, function(place, status) {
+      myStatus = status === google.maps.places.PlacesServiceStatus.OK
+      callback(place, myStatus)
+    });
   }
 
   var _geocodeAddress = function(address, callback) {
@@ -174,7 +77,8 @@ var Map = function() {
   return {
     init: _initialize,
     geocodeAddress: _geocodeAddress,
-    addMarker: _addMarker
+    addMarker: _addMarker,
+    getPlaceDetails: _getPlaceDetails 
   };
 }();
 
