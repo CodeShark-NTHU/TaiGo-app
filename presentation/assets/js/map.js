@@ -26,26 +26,23 @@ var Map = function() {
   /*
     Options: 
     @coord: [lng,lat]
-    @color: hex color 
-    @size: optional px value
-    @popupTemplate: html
+    @color: hex color optional
+    @popupTemplate: html optional
   */
   var _addMarker = function(options){
 
     var _this = this;
-    _.defaults(options, {size: 30, color: "#89849b", popupTemplate: ""});
+    _.defaults(options, {color: "#89849b", popupTemplate: ""});
 
     // create a HTML element for each feature
     var el = document.createElement('div');
-    el.innerHTML = '<div style="background: '+ options.color + '; width:' + options.size + 'px; height:' + options.size + 'px; "  class="pin"></div>';
+    el.innerHTML = '<div style="background: '+ options.color + ';"  class="pin"></div>';
 
     new mapboxgl.Marker(el)
     .setLngLat(options.coord)
     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
     .setHTML(options.popupTemplate) )
     .addTo(_this.map);
-
-    
   }
 
   var _getPlaceDetails = function(placeID, callback) {

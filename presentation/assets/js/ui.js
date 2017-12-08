@@ -1,16 +1,46 @@
 var UI = function() {
+  
   var _initalize = function() {
-    
-    var searchForm = document.getElementById('search-container')
+   // _shouldDisplayElement('#trip-info-container', false);
+    this.searchForm = document.getElementById('search-container')
+  
+    var _this = this;
 
-    searchForm.onsubmit = function(e){
+    this.searchForm.onsubmit = function(e){
       e.preventDefault();
-
-      var address = searchForm.search_input.value;
+      var address = _this.searchForm.search_input.value;
       Map.geocodeAddress(address, _renderGeocodeAddress);
 
     };
+   
   }
+
+  var _clearSearchResults = function() {
+    var searchInput = document.getElementById('search-input');
+    searchInput.value = "";
+    _shouldDisplayElement('#trip-info-container', false);
+
+    //remove all markers. - TODO
+
+  };
+
+  var _searchInputActions = function() {
+    var searchInput = document.getElementById('search-input');
+    var val = searchInput.value.trim();
+
+    if(val.length == 0){
+      //_shouldDisplayElement('#trip-info-container', false);
+      _shouldDisplayElement('#search-cancel', false);
+    } else {
+      //_shouldDisplayElement('#trip-info-container', true);
+      _shouldDisplayElement('#search-cancel', true);
+    }
+
+    console.log("change");
+  };
+
+
+  
   /*
     Options:
     @title: string
@@ -25,23 +55,46 @@ var UI = function() {
     return template(title + body);
   }
 
+  var _shouldDisplayElement = function(elem, cond){
+    if(cond)
+      $(elem).show();
+    else
+      $(elem).hide();
+
+  }
+
   var _renderGeocodeAddress = function(result){
     if(result.length > 0) {
       console.log(result);
       var data = result[0];
       var location = data.geometry.location;
 
+      //Get place information about destination
       Map.getPlaceDetails(data.place_id, function(place,status){
         if(status){
           var popup = _generatePopupTemplate({title: place.name, desc: data.formatted_address});
+
+          //add marker
           Map.addMarker({
             coord: [location.lng(), location.lat()],
             popupTemplate: popup
           });
+
+          //update place title
+          _updatePlaceNameTitle(place.name);
+
+          //update other things
+
+          //display trip infor
+          _shouldDisplayElement('#trip-info-container', true);
+
         } else {
           console.log("Could not find place details");
         }
       });
+
+
+      //get top 3 nearest stops to user which are in the same subroute as destination
 
     
 
@@ -49,14 +102,21 @@ var UI = function() {
       alert("No location found!");
     }
   }
+
+  var _updatePlaceNameTitle = function(place_name){
+    var placeEl = document.getElementById('place-title');
+    placeEl.innerText = place_name;
+  }
   
-
- 
-
   return {
     init: _initalize,
-    generatePopupTemplate: _generatePopupTemplate
+    generatePopupTemplate: _generatePopupTemplate,
+    updatePlaceNameTitle: _updatePlaceNameTitle,
+    shouldDisplayElement: _shouldDisplayElement,
+    searchInputActions: _searchInputActions,
+    clearSearchResults: _clearSearchResults
   };
+
 }();
 
 document.addEventListener("DOMContentLoaded", function() {

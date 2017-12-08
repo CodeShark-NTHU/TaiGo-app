@@ -82,6 +82,10 @@ body {
   font-size:14px; 
 }
 
+#search-cancel {
+  display: none;
+}
+
 #search-cancel a > i{
   margin:0 -10px;
   color:#999;
@@ -90,6 +94,7 @@ body {
 #trip-info-container {
   position: absolute;
   bottom:0;
+  display: none;
   height:200px;
   width:100%;
   /*background: rgba(50, 50, 50, 0.5); */
