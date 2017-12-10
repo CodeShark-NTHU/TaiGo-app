@@ -9,12 +9,12 @@ module TaiGo
    
     plugin :render, engine: 'slim', views: 'presentation/views'
     plugin :assets, css: 'style.css', path: 'presentation/assets'
-    plugin :assets, js: ['map.js', 'ui.js'], path: 'presentation/assets'
+    plugin :assets, js: ['user.js','map.js', 'ui.js'], path: 'presentation/assets'
     plugin :assets, image: 'default-marker-icon.png', path: 'presentation/assets'
-   
+  
     opts[:root] = 'presentation/assets'
     plugin :public, root: 'static'
-    
+  
     route do |routing|
       routing.assets
       routing.public

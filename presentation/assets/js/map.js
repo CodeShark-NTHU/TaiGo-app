@@ -45,6 +45,7 @@ var Map = function() {
     .addTo(_this.map);
   }
 
+
   var _getPlaceDetails = function(placeID, callback) {
     this.placeService.getDetails({
       placeId: placeID

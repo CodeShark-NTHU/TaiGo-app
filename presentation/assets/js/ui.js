@@ -12,6 +12,28 @@ var UI = function() {
       Map.geocodeAddress(address, _renderGeocodeAddress);
 
     };
+
+    User.getUserLocation(function(data){
+      //handle success
+      
+      console.log(data); //remove
+
+      Map.addMarker({
+        coord: [data.coords.longitude, data.coords.latitude],
+        color: "#2196F3",
+        popupTemplate: _generatePopupTemplate({title: "User", desc: "You're here now."})
+      });
+
+      Map.map.flyTo({
+        center: [data.coords.longitude, data.coords.latitude],
+        zoom: 14
+      });
+      
+    }, function(error) {
+      //handle failure here.
+      //add modal or message at the bottom UI here - TODO
+      alert("ERROR: " + User.getErrorMessage(error));
+    });
    
   }
 
