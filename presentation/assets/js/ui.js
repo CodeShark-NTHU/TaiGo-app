@@ -13,21 +13,13 @@ var UI = function() {
 
     };
 
-    User.getUserLocation(function(data){
+    //starts listening for user location
+    User.startUserLocationWatch(function(data){
       //handle success
+      var userCoords = [data.coords.longitude, data.coords.latitude];
       
-      console.log(data); //remove
-
-      Map.addMarker({
-        coord: [data.coords.longitude, data.coords.latitude],
-        color: "#2196F3",
-        popupTemplate: _generatePopupTemplate({title: "User", desc: "You're here now."})
-      });
-
-      Map.map.flyTo({
-        center: [data.coords.longitude, data.coords.latitude],
-        zoom: 14
-      });
+      //updates user marker
+      Map.setUserMarker(userCoords, _generatePopupTemplate({title: "User", desc: "You're here now."}));
       
     }, function(error) {
       //handle failure here.
@@ -95,19 +87,40 @@ var UI = function() {
       Map.getPlaceDetails(data.place_id, function(place,status){
         if(status){
           var popup = _generatePopupTemplate({title: place.name, desc: data.formatted_address});
-
+          var destCoords = [location.lng(), location.lat()];
           //add marker
-          Map.addMarker({
-            coord: [location.lng(), location.lat()],
-            popupTemplate: popup
-          });
+          Map.setDestinationMarker( destCoords, popup);
+
+          var userCoords = User.getUserLocation();
+          console.log("user: " + JSON.stringify(userCoords));
+          console.log("dest: " + JSON.stringify(destCoords));
+
+          if(!_.isUndefined(userCoords)){
+            
+           // var bbox =  new mapboxgl.LngLatBounds([[userCoords.lng, userCoords.lat], destCoords]);
+            try {
+              var bbox = [[userCoords.lng, userCoords.lat], destCoords]
+            ; 
+
+             /* Map.map.fitBounds(bbox.getCenter(), {
+                padding: {top: 50, bottom:50, left: 660, right: 660}
+              }); */
+              Map.map.flyTo({
+                center: destCoords
+              }); 
+            }
+            catch(err){
+             console.log(err);
+            }
+           
+          } else {
+            //show some UI error message. 
+          }
 
           //update place title
           _updatePlaceNameTitle(place.name);
 
-          //update other things
-
-          //display trip infor
+          //display trip info
           _shouldDisplayElement('#trip-info-container', true);
 
         } else {

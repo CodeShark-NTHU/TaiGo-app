@@ -20,9 +20,51 @@ var Map = function() {
 
     this.geocoder = new google.maps.Geocoder();
     this.placeService = new google.maps.places.PlacesService(document.createElement('div'));
-
+    this.userMarker = undefined;
+    this.destMarker = undefined;
    
   }
+
+
+  var _setUserMarker = function(userCoords, popup) {
+    if(_.isUndefined(this.userMarker)) {
+      this.userMarker = this.addMarker({
+        coord: userCoords,
+        color: "#2196F3",
+        popupTemplate: popup
+      });  
+
+      Map.map.flyTo({
+        center: userCoords,
+        zoom: 14
+      });
+    } else {
+      this.userMarker.setLngLat(userCoords);
+    }
+   
+  };
+
+  var _getUserMarker = function() {
+    return this.userMarker;
+  };
+
+  var _setDestinationMarker = function(coords, popup){
+    if(_.isUndefined(this.destMarker)){
+      
+      this.destMarker = Map.addMarker({
+        coord: coords,
+        popupTemplate: popup
+      });
+
+    } else {
+      this.destMarker.setLngLat(coords);
+    }
+  };
+
+  var _getDestinationMarker = function() {
+    return this.destMarker;
+  };
+
   /*
     Options: 
     @coord: [lng,lat]
@@ -34,17 +76,18 @@ var Map = function() {
     var _this = this;
     _.defaults(options, {color: "#89849b", popupTemplate: ""});
 
-    // create a HTML element for each feature
+    // create a HTML element for each feature - TODO: MOVE TO UI.js
     var el = document.createElement('div');
     el.innerHTML = '<div style="background: '+ options.color + ';"  class="pin"></div>';
 
-    new mapboxgl.Marker(el)
+    marker = new mapboxgl.Marker(el)
     .setLngLat(options.coord)
     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
     .setHTML(options.popupTemplate) )
     .addTo(_this.map);
-  }
 
+    return marker;
+  }
 
   var _getPlaceDetails = function(placeID, callback) {
     this.placeService.getDetails({
@@ -58,26 +101,51 @@ var Map = function() {
   var _geocodeAddress = function(address, callback) {
     this.geocoder.geocode({'address': address}, function(results, status) {
       if (status === 'OK') {
-        /*resultsMap.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-          map: resultsMap,
-          position: results[0].geometry.location
-        }); */
         callback(results);
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
       }
     });
   }
+  /*
+    @pointArry: array of [lng, lat]
+  */
+  var _generateLineString = function(pointArr){
+    var geojson = {
+      "type": "FeatureCollection",
+      "features": [{
+          "type": "Feature",
+          "geometry": {
+              "type": "LineString",
+              "properties": {},
+              "coordinates": pointArr
+          }
+      }]
+    };
 
+    return geojson;
+  }
+  /*
+    options:
+      @geoJson: json
+      @color: hexcolor string 
+      @width: int
+  */
+  var _drawLine = function(options){
 
+  }
 
   return {
     init: _initialize,
     geocodeAddress: _geocodeAddress,
     addMarker: _addMarker,
-    getPlaceDetails: _getPlaceDetails 
+    getPlaceDetails: _getPlaceDetails,
+    setUserMarker: _setUserMarker,
+    getUserMarker: _getUserMarker,
+    setDestinationMarker: _setDestinationMarker,
+    getDestinationMarker: _setDestinationMarker
   };
+
 }();
 
 document.addEventListener("DOMContentLoaded", function() {
