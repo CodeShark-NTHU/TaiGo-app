@@ -26,12 +26,12 @@ var Map = function() {
   }
 
 
-  var _setUserMarker = function(userCoords, popup) {
+  var _setUserMarker = function(userCoords, markerType, popup) {
     if(_.isUndefined(this.userMarker)) {
       this.userMarker = this.addMarker({
         coord: userCoords,
-        color: "#2196F3",
-        popupTemplate: popup
+        popupTemplate: popup,
+        markerElem: markerType
       });  
 
       Map.map.flyTo({
@@ -48,12 +48,13 @@ var Map = function() {
     return this.userMarker;
   };
 
-  var _setDestinationMarker = function(coords, popup){
+  var _setDestinationMarker = function(coords, popup, markerType){
     if(_.isUndefined(this.destMarker)){
       
       this.destMarker = Map.addMarker({
         coord: coords,
-        popupTemplate: popup
+        popupTemplate: popup,
+        markerElem: markerType
       });
 
     } else {
@@ -70,17 +71,20 @@ var Map = function() {
     @coord: [lng,lat]
     @color: hex color optional
     @popupTemplate: html optional
+    @markerElem: html element [optional]
   */
   var _addMarker = function(options){
 
     var _this = this;
-    _.defaults(options, {color: "#89849b", popupTemplate: ""});
+
+    var defaultEl = document.createElement('div');
+    defaultEl.innerHTML = '<div  class="pulse"></div>';
+
+    _.defaults(options, {color: "#89849b", popupTemplate: "", markerElem: defaultEl });
 
     // create a HTML element for each feature - TODO: MOVE TO UI.js
-    var el = document.createElement('div');
-    el.innerHTML = '<div style="background: '+ options.color + ';"  class="pin"></div>';
 
-    marker = new mapboxgl.Marker(el)
+    marker = new mapboxgl.Marker(options.markerElem)
     .setLngLat(options.coord)
     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
     .setHTML(options.popupTemplate) )
@@ -127,13 +131,58 @@ var Map = function() {
   }
   /*
     options:
-      @geoJson: json
-      @color: hexcolor string 
-      @width: int
+      @id: string [required]
+      @geoJson: json [required]
+      @errorCallback: function 
+      @lineColor: hexcolor string 
+      @fitBounds: boolean [default: true]
+      @lineWidth: int
   */
   var _drawLine = function(options){
+  
+      _.defaults(options, {lineColor: "#BF93E4", lineWidth:  5, errorCallback: function() { }, fitBounds: true });
 
-  }
+      if(_.isUndefined(options.id) || _.isUndefined(options.geoJson)){
+        options.errorCallback();
+        console.log("Some error");
+      } else {
+        this.map.addLayer({
+          "id": options.id,
+          "type": "line",
+          "source": {
+              "type": "geojson",
+              "data": options.geoJson
+          },
+          "layout": {
+              "line-join": "round",
+              "line-cap": "round"
+          },
+          "paint": {
+              "line-color": options.lineColor,
+              "line-width": options.lineWidth
+          }
+        });
+
+        var coordinates = options.geoJson.features[0].geometry.coordinates;
+        var bounds = coordinates.reduce(function(bounds, coord) {
+            return bounds.extend(coord);
+        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+        this.map.fitBounds(bounds, {
+            padding: 20
+        });
+      }
+
+  };
+
+  var _removeLine = function(id){
+    this.map.removeLayer(id);
+  };
+
+  var _removeAllLines = function() {
+    //loop line array and remove all lines
+    
+  };
 
   return {
     init: _initialize,
@@ -143,7 +192,10 @@ var Map = function() {
     setUserMarker: _setUserMarker,
     getUserMarker: _getUserMarker,
     setDestinationMarker: _setDestinationMarker,
-    getDestinationMarker: _setDestinationMarker
+    getDestinationMarker: _setDestinationMarker,
+    generateLineString: _generateLineString,
+    drawLine: _drawLine,
+    removeLine: _removeLine
   };
 
 }();

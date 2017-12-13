@@ -19,7 +19,7 @@ var UI = function() {
       var userCoords = [data.coords.longitude, data.coords.latitude];
       
       //updates user marker
-      Map.setUserMarker(userCoords, _generatePopupTemplate({title: "User", desc: "You're here now."}));
+      Map.setUserMarker(userCoords, _createUserMarkerElm(), _generatePopupTemplate({title: "User", desc: "You're here now."}));
       
     }, function(error) {
       //handle failure here.
@@ -34,7 +34,16 @@ var UI = function() {
     searchInput.value = "";
     _shouldDisplayElement('#trip-info-container', false);
 
+    //remove routes
+    Map.removeLine("line"); //test - TODO - Remove later
+
+    //remove dest marker - TODO - maybe add this as a function of Map.js?
+    Map.destMarker.remove();
+    Map.destMarker = undefined;
+
     //remove all markers. - TODO
+
+
 
   };
 
@@ -77,6 +86,24 @@ var UI = function() {
 
   }
 
+  var _createBusStopMarkerElem = function() {
+    var el = document.createElement('div');
+    el.innerHTML = '<div class="pin-bus-stop"><i class="material-icons">store_mall_directory</i></div>';
+    return el;
+  }
+
+  var _createBusMarkerElem = function() {
+    var el = document.createElement('div');
+    el.innerHTML = '<div class="pin-bus"><i class="material-icons">directions_bus</i></div>';
+    return el;
+  }
+
+  var _createUserMarkerElm = function() {
+    var el = document.createElement('div');
+    el.innerHTML = '<div  class="pulse"></div>';
+    return el;
+  }
+
   var _renderGeocodeAddress = function(result){
     if(result.length > 0) {
       console.log(result);
@@ -89,7 +116,7 @@ var UI = function() {
           var popup = _generatePopupTemplate({title: place.name, desc: data.formatted_address});
           var destCoords = [location.lng(), location.lat()];
           //add marker
-          Map.setDestinationMarker( destCoords, popup);
+          Map.setDestinationMarker( destCoords, popup, _createBusMarkerElem());
 
           var userCoords = User.getUserLocation();
           console.log("user: " + JSON.stringify(userCoords));
@@ -97,21 +124,22 @@ var UI = function() {
 
           if(!_.isUndefined(userCoords)){
             
-           // var bbox =  new mapboxgl.LngLatBounds([[userCoords.lng, userCoords.lat], destCoords]);
-            try {
-              var bbox = [[userCoords.lng, userCoords.lat], destCoords]
-            ; 
+            var bbox = [[userCoords.lng, userCoords.lat], destCoords];
+            /*Map.map.flyTo({
+              center: destCoords
+            });  */
 
-             /* Map.map.fitBounds(bbox.getCenter(), {
-                padding: {top: 50, bottom:50, left: 660, right: 660}
-              }); */
-              Map.map.flyTo({
-                center: destCoords
-              }); 
-            }
-            catch(err){
-             console.log(err);
-            }
+            //get top 3 nearest stops to user which are in the same subroute as destination
+
+            var geojson = Map.generateLineString(bbox);
+
+            Map.drawLine({
+              id: "line", //test id - TODO - Remove later
+              geoJson: geojson
+            });
+            
+            
+            
            
           } else {
             //show some UI error message. 
@@ -129,7 +157,7 @@ var UI = function() {
       });
 
 
-      //get top 3 nearest stops to user which are in the same subroute as destination
+     
 
     
 
@@ -149,7 +177,8 @@ var UI = function() {
     updatePlaceNameTitle: _updatePlaceNameTitle,
     shouldDisplayElement: _shouldDisplayElement,
     searchInputActions: _searchInputActions,
-    clearSearchResults: _clearSearchResults
+    clearSearchResults: _clearSearchResults,
+    createBusStopMarkerElem: _createBusStopMarkerElem
   };
 
 }();
