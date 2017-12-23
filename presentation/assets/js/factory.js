@@ -208,6 +208,7 @@ var _hex2rgb = function(hex, opacity) {
   return {
     init: _initialize,
     generateId: _generateId,
+    hex2rgb: _hex2rgb,
     selectColor: _selectColor 
   }
 }();

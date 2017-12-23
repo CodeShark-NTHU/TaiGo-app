@@ -213,9 +213,9 @@ var Map = function() {
 
   var _removeAllLines = function() {
     //loop line array and remove all lines - TODO
-    
+    var _this = this;
     _.each(this.mapLines, function(v,i,l){
-      _removeLine(v);
+      _this.removeLine(v);
     });
 
     this.mapLines = [];
@@ -232,7 +232,8 @@ var Map = function() {
     getDestinationMarker: _setDestinationMarker,
     generateLineString: _generateLineString,
     drawLine: _drawLine,
-    removeLine: _removeLine
+    removeLine: _removeLine,
+    removeAllLines: _removeAllLines
   };
 
 }();

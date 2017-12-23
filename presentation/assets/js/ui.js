@@ -44,15 +44,13 @@ var UI = function() {
     searchInput.value = "";
     _shouldDisplayElement('#trip-info-container', false);
 
-    //remove routes
-    Map.removeLine("line"); //test - TODO - Remove later
 
     //remove dest marker - TODO - maybe add this as a function of Map.js?
     Map.destMarker.remove();
     Map.destMarker = undefined;
 
     //remove all markers. - TODO
-
+    Map.removeAllLines();
 
 
   };
@@ -143,10 +141,18 @@ var UI = function() {
               data = data.possibleways;
 
               if(data.length > 0){
-                _.each(data, function(v,i,l){
+                _.each(_.chain(data).reverse().value(), function(v,i,l){
 
                   var walking_steps = v.walking_steps;
                   var bus_steps = v.bus_steps;
+
+                  var color = ''
+                    if(i == (data.length - 1)){
+                      color = '#2196F3';
+                    }else {
+                      color = Factory.hex2rgb('#616161', 0.5).css;
+                     
+                    }
 
                   //draw the walking path(s)
                   _.each(walking_steps, function(v,i,l){
@@ -158,7 +164,7 @@ var UI = function() {
                     Map.drawLine({
                       id: Factory.generateId(),
                       geoJson: Map.generateLineString(points),
-                      lineColor: '#2196F3',
+                      lineColor: color,
                       type: 'dashed'
                     });
                   });
@@ -167,11 +173,11 @@ var UI = function() {
                     var points = _.map(v.bus_path, function(v, i){
                       return [v.longitude, v.latitude];
                     });
-
+                    
                     Map.drawLine({
                       id: Factory.generateId(),
                       geoJson: Map.generateLineString(points),
-                      lineColor: Factory.selectColor()
+                      lineColor: color
                     });
 
                   });
