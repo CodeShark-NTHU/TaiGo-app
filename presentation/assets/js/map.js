@@ -22,6 +22,7 @@ var Map = function() {
     this.placeService = new google.maps.places.PlacesService(document.createElement('div'));
     this.userMarker = undefined;
     this.destMarker = undefined;
+    this.mapLines = [];
    
   }
 
@@ -78,12 +79,13 @@ var Map = function() {
     var _this = this;
 
     var defaultEl = document.createElement('div');
-    defaultEl.innerHTML = '<div  class="pulse"></div>';
+    defaultEl.innerHTML = '<div  class="pin"></div>';
 
     _.defaults(options, {color: "#89849b", popupTemplate: "", markerElem: defaultEl });
 
-    // create a HTML element for each feature - TODO: MOVE TO UI.js
 
+    // create a HTML element for each feature - TODO: MOVE TO UI.js
+   // options.markerElem.style.color = options.color;
     marker = new mapboxgl.Marker(options.markerElem)
     .setLngLat(options.coord)
     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
@@ -134,33 +136,61 @@ var Map = function() {
       @id: string [required]
       @geoJson: json [required]
       @errorCallback: function 
+      @type: 'line', 'dashed', 'circle' [options, default = 'line']
       @lineColor: hexcolor string 
       @fitBounds: boolean [default: true]
       @lineWidth: int
   */
   var _drawLine = function(options){
   
-      _.defaults(options, {lineColor: "#BF93E4", lineWidth:  5, errorCallback: function() { }, fitBounds: true });
+      _.defaults(options, {type: 'line',lineColor: "#BF93E4", lineWidth:  5, errorCallback: function() { }, fitBounds: true });
 
       if(_.isUndefined(options.id) || _.isUndefined(options.geoJson)){
         options.errorCallback();
         console.log("Some error");
       } else {
+        var type = '';
+        var paint  = undefined;
+
+        if(options.type == 'dashed'){
+          type = 'line';
+          paint = {
+            'line-color': options.lineColor,
+            'line-width': options.lineWidth,
+            'line-dasharray': [2, 1],
+          }
+        } else {
+          type = options.type;
+
+          switch(type){
+            case 'line':
+              paint = {
+                "line-color": options.lineColor,
+                "line-width": options.lineWidth
+              }
+              break;
+            case 'circle':
+              paint = {
+                'circle-color': options.lineColor,
+                'circle-radius': 3, // Make another key for options - TODO
+              }
+              break;
+          }
+        }
+        
+       
         this.map.addLayer({
           "id": options.id,
-          "type": "line",
+          "type": type,
           "source": {
               "type": "geojson",
               "data": options.geoJson
-          },
+          } /*,
           "layout": {
               "line-join": "round",
               "line-cap": "round"
-          },
-          "paint": {
-              "line-color": options.lineColor,
-              "line-width": options.lineWidth
-          }
+          } */,
+          "paint": paint
         });
 
         var coordinates = options.geoJson.features[0].geometry.coordinates;
@@ -171,6 +201,8 @@ var Map = function() {
         this.map.fitBounds(bounds, {
             padding: 20
         });
+
+        this.mapLines.push(options.id);
       }
 
   };
@@ -180,8 +212,13 @@ var Map = function() {
   };
 
   var _removeAllLines = function() {
-    //loop line array and remove all lines
+    //loop line array and remove all lines - TODO
     
+    _.each(this.mapLines, function(v,i,l){
+      _removeLine(v);
+    });
+
+    this.mapLines = [];
   };
 
   return {

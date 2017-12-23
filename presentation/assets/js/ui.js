@@ -11,8 +11,9 @@ var UI = function() {
       var address = _this.searchForm.search_input.value;
       Map.geocodeAddress(address, _renderGeocodeAddress);
 
+      
     };
-
+   
     //starts listening for user location
     User.startUserLocationWatch(function(data){
       //handle success
@@ -26,6 +27,15 @@ var UI = function() {
       //add modal or message at the bottom UI here - TODO
       alert("ERROR: " + User.getErrorMessage(error));
     });
+
+    /*$("#hamburger-menu a").toggle(function(e) {
+     // e.preventDefault();
+      var sidebar = $("#side-menu-container");
+
+      sidebar.css({"left":"2000px"}).animate({"left":"0px"}, "slow"); 
+
+      return false;
+    }); */
    
   }
 
@@ -114,9 +124,9 @@ var UI = function() {
       Map.getPlaceDetails(data.place_id, function(place,status){
         if(status){
           var popup = _generatePopupTemplate({title: place.name, desc: data.formatted_address});
-          var destCoords = [location.lng(), location.lat()];
+          var destCoords = [location.lat(),location.lng()];
           //add marker
-          Map.setDestinationMarker( destCoords, popup, _createBusMarkerElem());
+          Map.setDestinationMarker( [location.lng(),location.lat()], popup, _createBusMarkerElem());
 
           var userCoords = User.getUserLocation();
           console.log("user: " + JSON.stringify(userCoords));
@@ -124,19 +134,63 @@ var UI = function() {
 
           if(!_.isUndefined(userCoords)){
             
-            var bbox = [[userCoords.lng, userCoords.lat], destCoords];
-            /*Map.map.flyTo({
-              center: destCoords
-            });  */
-
             //get top 3 nearest stops to user which are in the same subroute as destination
 
-            var geojson = Map.generateLineString(bbox);
+            Service.search({
+              start: [userCoords.lat,userCoords.lng],
+              end: destCoords
+            }).then(function(data){
+              data = data.possibleways;
+
+              if(data.length > 0){
+                _.each(data, function(v,i,l){
+
+                  var walking_steps = v.walking_steps;
+                  var bus_steps = v.bus_steps;
+
+                  //draw the walking path(s)
+                  _.each(walking_steps, function(v,i,l){
+
+                    var points = _.map(v.walking_path, function(v, i){
+                      return [v.longitude, v.latitude];
+                    });
+
+                    Map.drawLine({
+                      id: Factory.generateId(),
+                      geoJson: Map.generateLineString(points),
+                      lineColor: '#2196F3',
+                      type: 'dashed'
+                    });
+                  });
+
+                  _.each(bus_steps, function(v,i,l){
+                    var points = _.map(v.bus_path, function(v, i){
+                      return [v.longitude, v.latitude];
+                    });
+
+                    Map.drawLine({
+                      id: Factory.generateId(),
+                      geoJson: Map.generateLineString(points),
+                      lineColor: Factory.selectColor()
+                    });
+
+                  });
+
+                });
+              } else {
+                //Handle no routes found error - TODO
+              }
+            }, function(error){
+              //Handle error with UI - TODO
+              console.log(error);
+            });
+
+           /* var geojson = Map.generateLineString(bbox);
 
             Map.drawLine({
               id: "line", //test id - TODO - Remove later
               geoJson: geojson
-            });
+            }); */
             
             
             

@@ -9,7 +9,7 @@ module TaiGo
    
     plugin :render, engine: 'slim', views: 'presentation/views'
     plugin :assets, css: 'style.css', path: 'presentation/assets'
-    plugin :assets, js: ['user.js','map.js', 'ui.js'], path: 'presentation/assets'
+    plugin :assets, js: ['config.js','factory.js','user.js','service.js','map.js', 'ui.js'], path: 'presentation/assets'
     plugin :assets, image: 'default-marker-icon.png', path: 'presentation/assets'
   
     opts[:root] = 'presentation/assets'
