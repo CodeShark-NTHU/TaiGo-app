@@ -16,7 +16,7 @@ var Service = function() {
       }, error => {
         reject(new Error(error.message))
       })
-    })
+    });
   }
   /*
     Options:

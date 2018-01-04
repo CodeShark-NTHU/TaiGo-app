@@ -127,8 +127,7 @@ var UI = function() {
           Map.setDestinationMarker( [location.lng(),location.lat()], popup, _createBusMarkerElem());
 
           var userCoords = User.getUserLocation();
-          console.log("user: " + JSON.stringify(userCoords));
-          console.log("dest: " + JSON.stringify(destCoords));
+          
 
           if(!_.isUndefined(userCoords)){
             
@@ -139,8 +138,16 @@ var UI = function() {
               end: destCoords
             }).then(function(data){
               data = data.possibleways;
+              
+              if(data.length > 0){ //This will give an error if data is not an array - TODO
+               /* var promise = new Promise((resolve, reject) => {
+                  
+                        resolve(data);
+                    
+                      reject(new Error('error'))
+                   
+                }); */
 
-              if(data.length > 0){
                 _.each(_.chain(data).reverse().value(), function(v,i,l){
 
                   var walking_steps = v.walking_steps;
@@ -169,6 +176,7 @@ var UI = function() {
                     });
                   });
 
+                  //Draws routes for the buses
                   _.each(bus_steps, function(v,i,l){
                     var points = _.map(v.bus_path, function(v, i){
                       return [v.longitude, v.latitude];
@@ -182,7 +190,13 @@ var UI = function() {
 
                   });
 
+                  if(i == (data.length - 1)){
+                    Map.fitCurrentBounds();
+                  }
+
                 });
+
+               
               } else {
                 //Handle no routes found error - TODO
               }

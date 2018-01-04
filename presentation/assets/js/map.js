@@ -194,16 +194,43 @@ var Map = function() {
         });
 
         var coordinates = options.geoJson.features[0].geometry.coordinates;
-        var bounds = coordinates.reduce(function(bounds, coord) {
+
+       /* var bounds = coordinates.reduce(function(bounds, coord) {
             return bounds.extend(coord);
-        }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+        }, new mapboxgl.LngLatBounds(coordinates[0],coordinates[0])); */
 
-        this.map.fitBounds(bounds, {
-            padding: 20
-        });
+        /*
+        this.map.fitBounds(bounds , {
+            padding: 50
+        });  */
 
-        this.mapLines.push(options.id);
+        this.mapLines.push({id: options.id, coordinates: coordinates});
       }
+
+  };
+
+  var _fitCurrentBounds = function() {
+    ///var allCoordinates = _.flatten());
+    var coords = _.map(this.mapLines, function(v){ return v.coordinates; });
+    var allCoordinates = [];
+
+    _.each(coords, function(v,i,l){
+      _.each(v, function(v1,i1,l1){
+        allCoordinates.push(v1);
+      });
+    });
+
+    
+    console.log(allCoordinates);
+    var bounds = allCoordinates.reduce(function(bounds, coord) {
+      return bounds.extend(coord);
+    }, new mapboxgl.LngLatBounds(0,0));
+    
+    console.log(bounds);
+
+    this.map.fitBounds(bounds , {
+      padding: 50
+    }); 
 
   };
 
@@ -212,10 +239,9 @@ var Map = function() {
   };
 
   var _removeAllLines = function() {
-    //loop line array and remove all lines - TODO
     var _this = this;
     _.each(this.mapLines, function(v,i,l){
-      _this.removeLine(v);
+      _this.removeLine(v.id);
     });
 
     this.mapLines = [];
@@ -233,7 +259,8 @@ var Map = function() {
     generateLineString: _generateLineString,
     drawLine: _drawLine,
     removeLine: _removeLine,
-    removeAllLines: _removeAllLines
+    removeAllLines: _removeAllLines,
+    fitCurrentBounds: _fitCurrentBounds 
   };
 
 }();
