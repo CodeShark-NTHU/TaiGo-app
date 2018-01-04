@@ -55,7 +55,7 @@ var Map = function() {
       this.destMarker = Map.addMarker({
         coord: coords,
         popupTemplate: popup,
-        markerElem: markerType
+        color: "#FF5252"
       });
 
     } else {
@@ -79,9 +79,14 @@ var Map = function() {
     var _this = this;
 
     var defaultEl = document.createElement('div');
-    defaultEl.innerHTML = '<div  class="pin"></div>';
 
-    _.defaults(options, {color: "#89849b", popupTemplate: "", markerElem: defaultEl });
+    if(_.isUndefined(options.color)){
+      options.color = "#89849b";
+    } 
+
+    defaultEl.innerHTML = '<div style="background:' + options.color + '";  class="pin"></div>';
+
+    _.defaults(options, { popupTemplate: "", markerElem: defaultEl });
 
 
     // create a HTML element for each feature - TODO: MOVE TO UI.js
@@ -210,7 +215,6 @@ var Map = function() {
   };
 
   var _fitCurrentBounds = function() {
-    ///var allCoordinates = _.flatten());
     var coords = _.map(this.mapLines, function(v){ return v.coordinates; });
     var allCoordinates = [];
 
@@ -220,13 +224,9 @@ var Map = function() {
       });
     });
 
-    
-    console.log(allCoordinates);
     var bounds = allCoordinates.reduce(function(bounds, coord) {
       return bounds.extend(coord);
     }, new mapboxgl.LngLatBounds(0,0));
-    
-    console.log(bounds);
 
     this.map.fitBounds(bounds , {
       padding: 50
