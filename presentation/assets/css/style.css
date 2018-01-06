@@ -537,3 +537,12 @@ body {
 .tingle-modal-box__content {
   padding: 0px !important;
 }
+
+
+#trip-details {
+  font-family: 'Raleway', sans-serif;
+}
+
+#trip-details span i::before {
+  padding: 5px;
+}

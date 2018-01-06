@@ -267,6 +267,11 @@ var UI = function() {
 
                   if(i == (data.length - 1)){
                     Map.fitCurrentBounds();
+                    //update place title
+                    _updatePlaceNameTitle(place.name);
+                    updateTripDetails(bus_steps[data.length - 1]);
+                    //display trip info
+                    _shouldDisplayElement('#trip-info-container', true);
                   }
 
                 });
@@ -286,13 +291,7 @@ var UI = function() {
             //show some UI error message. 
           }
 
-          //update place title
-          _updatePlaceNameTitle(place.name);
-
-
-
-          //display trip info
-          _shouldDisplayElement('#trip-info-container', true);
+         
 
         } else {
           console.log("Could not find place details");
@@ -315,7 +314,8 @@ var UI = function() {
   }
 
   var updateTripDetails = function(data){
-
+    var trip_duration = document.getElementById('trip-duration');
+    trip_duration.innerHTML = data.bus_duration;
   };
   
   return {
