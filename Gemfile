@@ -29,7 +29,9 @@ group :test do
   gem 'minitest'
   gem 'minitest-rg'
   gem 'rack-test'
+
   gem 'headless'
+  gem 'page-object'
   gem 'watir'
 end
 
