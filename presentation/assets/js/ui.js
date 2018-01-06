@@ -8,8 +8,11 @@ var UI = function() {
 
     this.searchForm.onsubmit = function(e){
       e.preventDefault();
+      _this.clearSearchResults();
       var address = _this.searchForm.search_input.value;
-      Map.geocodeAddress(address, _renderGeocodeAddress);
+      Map.geocodeAddress(address, function(result){
+        renderGeocodeAddress(result);
+      });
 
       
     };
@@ -20,7 +23,7 @@ var UI = function() {
       var userCoords = [data.coords.longitude, data.coords.latitude];
       
       //updates user marker
-      Map.setUserMarker(userCoords, _createUserMarkerElm(), _generatePopupTemplate({title: "User", desc: "You're here now."}));
+      Map.setUserMarker(userCoords, _createUserMarkerElm(), generatePopupTemplate({title: "User", desc: "You're here now."}));
       
     }, function(error) {
       //handle failure here.
@@ -36,22 +39,28 @@ var UI = function() {
 
       return false;
     }); */
+
+   
    
   }
 
   var _clearSearchResults = function() {
-    var searchInput = document.getElementById('search-input');
-    searchInput.value = "";
-    _shouldDisplayElement('#trip-info-container', false);
+    
+    if(Map.hasLines()){
+      var searchInput = document.getElementById('search-input');
+      searchInput.value = "";
+      _shouldDisplayElement('#trip-info-container', false);
 
 
-    //remove dest marker - TODO - maybe add this as a function of Map.js?
-    Map.destMarker.remove();
-    Map.destMarker = undefined;
+      //remove dest marker - TODO - maybe add this as a function of Map.js?
+      Map.destMarker.remove();
+      Map.destMarker = undefined;
 
-    //remove all markers. - TODO
-    Map.removeAllLines();
+      Map.removeAllBusStops();
 
+      //remove all markers. - TODO
+      Map.removeAllLines();
+    }
 
   };
 
@@ -77,7 +86,7 @@ var UI = function() {
     @title: string
     @desc: string
   */
-  var _generatePopupTemplate = function(options){
+  var generatePopupTemplate = function(options){
     _.defaults(options, {desc: ""});
     var template = function(html) { return '<div class="markerPopup">' + html + '</div>' };
     var title = '<div class="title">' + options.title + '</div>';
@@ -94,7 +103,7 @@ var UI = function() {
 
   }
 
-  var _createBusStopMarkerElem = function() {
+  var createBusStopMarkerElem = function() {
     var el = document.createElement('div');
     el.innerHTML = '<div class="pin-bus-stop"><i class="material-icons">store_mall_directory</i></div>';
     return el;
@@ -112,7 +121,81 @@ var UI = function() {
     return el;
   }
 
-  var _renderGeocodeAddress = function(result){
+  var drawWalkingPath = function(color, data){
+    _.each(data, function(v,i,l){
+      var points = _.map(v.walking_path, function(v, i){
+        return [v.longitude, v.latitude];
+      });
+
+      Map.drawLine({
+        id: Factory.generateId(),
+        geoJson: Map.generateLineString(points),
+        lineColor: color,
+        type: 'dashed'
+      });
+    });
+  };
+
+  var openMessageModal = function(title,message,type){
+    // instanciate new modal
+    var modal = new tingle.modal({
+      footer: true,
+      stickyFooter: false,
+      closeMethods: ['overlay', 'button', 'escape'],
+      closeLabel: "Close",
+      cssClass: [type + '-modal'],
+      onOpen: function() {
+          console.log('modal open');
+      },
+      onClose: function() {
+          console.log('modal closed');
+      },
+      beforeClose: function() {
+          // here's goes some logic
+          // e.g. save content before closing the modal
+          return true; // close the modal
+        return false; // nothing happens
+      }
+    });
+
+    var template = "<h2>" + title +"</h2> <p>" + message + "</p>";
+
+    // set content
+    modal.setContent(template);
+
+    // add a button
+    modal.addFooterBtn('Okay', 'tingle-btn tingle-btn--primary tingle-btn--pull-right', function() {
+      // here goes some logic
+      modal.close();
+    });
+
+    // open modal
+    modal.open();
+
+    // close modal
+   // modal.close();
+          
+  };
+
+
+  var renderBusStops = function(stops){
+    _.each(stops, function(stop_details, k){
+      var stop_info = stop_details.stop;
+      var sub_route_info = stop_details.sub_route;
+  
+      var coordinates = [stop_info.coordinates.longitude, stop_info.coordinates.latitude];
+      console.log(coordinates);
+      var sub_route_name = sub_route_info.name.english;
+      var stop_name = stop_info.name.english;
+
+      var popup = generatePopupTemplate({title: stop_name});
+
+      Map.addBusStopMarker(coordinates,createBusStopMarkerElem(), popup);
+
+    });
+  };
+
+  var renderGeocodeAddress = function(result){
     if(result.length > 0) {
       console.log(result);
       var data = result[0];
@@ -121,7 +204,7 @@ var UI = function() {
       //Get place information about destination
       Map.getPlaceDetails(data.place_id, function(place,status){
         if(status){
-          var popup = _generatePopupTemplate({title: place.name, desc: data.formatted_address});
+          var popup = generatePopupTemplate({title: place.name, desc: data.formatted_address});
           var destCoords = [location.lat(),location.lng()];
           //add marker
           Map.setDestinationMarker( [location.lng(),location.lat()], popup, _createBusMarkerElem());
@@ -140,41 +223,22 @@ var UI = function() {
               data = data.possibleways;
               
               if(data.length > 0){ //This will give an error if data is not an array - TODO
-               /* var promise = new Promise((resolve, reject) => {
-                  
-                        resolve(data);
-                    
-                      reject(new Error('error'))
-                   
-                }); */
-
+                
+                // Draw things in the map
                 _.each(_.chain(data).reverse().value(), function(v,i,l){
 
                   var walking_steps = v.walking_steps;
                   var bus_steps = v.bus_steps;
-
+                 
                   var color = ''
                     if(i == (data.length - 1)){
                       color = '#2196F3';
                     }else {
                       color = Factory.hex2rgb('#616161', 0.5).css;
-                     
                     }
 
                   //draw the walking path(s)
-                  _.each(walking_steps, function(v,i,l){
-
-                    var points = _.map(v.walking_path, function(v, i){
-                      return [v.longitude, v.latitude];
-                    });
-
-                    Map.drawLine({
-                      id: Factory.generateId(),
-                      geoJson: Map.generateLineString(points),
-                      lineColor: color,
-                      type: 'dashed'
-                    });
-                  });
+                  drawWalkingPath(color, walking_steps);
 
                   //Draws routes for the buses
                   _.each(bus_steps, function(v,i,l){
@@ -188,6 +252,17 @@ var UI = function() {
                       lineColor: color
                     });
 
+                    //add the stops of routes
+
+                    var stops_of_sub_routes = v.sub_routes; 
+                    console.log(stops_of_sub_routes);
+                    _.each(stops_of_sub_routes, function(sub_route,j){
+                      var stops = sub_route.stops_of_sub_route;
+
+                      renderBusStops(stops)
+                      
+                    });
+
                   });
 
                   if(i == (data.length - 1)){
@@ -199,20 +274,12 @@ var UI = function() {
                
               } else {
                 //Handle no routes found error - TODO
+
               }
             }, function(error){
               //Handle error with UI - TODO
               console.log(error);
             });
-
-           /* var geojson = Map.generateLineString(bbox);
-
-            Map.drawLine({
-              id: "line", //test id - TODO - Remove later
-              geoJson: geojson
-            }); */
-            
-            
             
            
           } else {
@@ -221,6 +288,8 @@ var UI = function() {
 
           //update place title
           _updatePlaceNameTitle(place.name);
+
+
 
           //display trip info
           _shouldDisplayElement('#trip-info-container', true);
@@ -244,15 +313,18 @@ var UI = function() {
     var placeEl = document.getElementById('place-title');
     placeEl.innerText = place_name;
   }
+
+  var updateTripDetails = function(data){
+
+  };
   
   return {
     init: _initalize,
-    generatePopupTemplate: _generatePopupTemplate,
+    generatePopupTemplate: generatePopupTemplate,
     updatePlaceNameTitle: _updatePlaceNameTitle,
     shouldDisplayElement: _shouldDisplayElement,
     searchInputActions: _searchInputActions,
-    clearSearchResults: _clearSearchResults,
-    createBusStopMarkerElem: _createBusStopMarkerElem
+    clearSearchResults: _clearSearchResults
   };
 
 }();

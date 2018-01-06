@@ -203,7 +203,9 @@ var _hex2rgb = function(hex, opacity) {
     };
 
     return _.sample(_.map(_.toArray(colors), function(v,i){ return _hex2rgb(v, 0.5).css; } ));
-  }
+  };
+
+
 
   return {
     init: _initialize,

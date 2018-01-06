@@ -17,7 +17,7 @@ var Service = function() {
         reject(new Error(error.message))
       })
     });
-  }
+  };
   /*
     Options:
       @start: [lat,lng], - Required

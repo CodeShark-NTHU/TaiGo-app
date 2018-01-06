@@ -22,11 +22,28 @@ var Map = function() {
     this.placeService = new google.maps.places.PlacesService(document.createElement('div'));
     this.userMarker = undefined;
     this.destMarker = undefined;
+    this.busStopMarkers = [];
     this.mapLines = [];
    
-  }
+  };
 
+  var _removeAllBusStops = function() {
+    _.each(this.busStopMarkers, function(marker, i){
+      marker.remove();
+    });
+    this.busStopMarkers = [];
+  };
 
+  var _addBusStopMarker = function(coords, markerType, popup){
+    var marker = this.addMarker({
+      coord: coords,
+      popupTemplate: popup,
+      markerElem: markerType
+    });  
+
+    this.busStopMarkers.push(marker);
+  };
+  
   var _setUserMarker = function(userCoords, markerType, popup) {
     if(_.isUndefined(this.userMarker)) {
       this.userMarker = this.addMarker({
@@ -49,6 +66,8 @@ var Map = function() {
     return this.userMarker;
   };
 
+  
+
   var _setDestinationMarker = function(coords, popup, markerType){
     if(_.isUndefined(this.destMarker)){
       
@@ -66,6 +85,7 @@ var Map = function() {
   var _getDestinationMarker = function() {
     return this.destMarker;
   };
+  
 
   /*
     Options: 
@@ -234,6 +254,10 @@ var Map = function() {
 
   };
 
+  var _hasLines = function() {
+    return this.mapLines.length > 0;
+  }
+
   var _removeLine = function(id){
     this.map.removeLayer(id);
   };
@@ -260,7 +284,10 @@ var Map = function() {
     drawLine: _drawLine,
     removeLine: _removeLine,
     removeAllLines: _removeAllLines,
-    fitCurrentBounds: _fitCurrentBounds 
+    removeAllBusStops: _removeAllBusStops,
+    fitCurrentBounds: _fitCurrentBounds,
+    addBusStopMarker: _addBusStopMarker,
+    hasLines: _hasLines
   };
 
 }();

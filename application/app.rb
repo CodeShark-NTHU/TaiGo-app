@@ -8,8 +8,8 @@ module TaiGo
   class App < Roda
    
     plugin :render, engine: 'slim', views: 'presentation/views'
-    plugin :assets, css: 'style.css', path: 'presentation/assets'
-    plugin :assets, js: ['config.js','factory.js','user.js','service.js','map.js', 'ui.js'], path: 'presentation/assets'
+    plugin :assets, css: ['tingle.min.css','style.css'], path: 'presentation/assets'
+    plugin :assets, js: ['tingle.min.js','config.js','factory.js','user.js','service.js','map.js', 'ui.js'], path: 'presentation/assets'
     plugin :assets, image: 'default-marker-icon.png', path: 'presentation/assets'
   
     opts[:root] = 'presentation/assets'

@@ -257,8 +257,8 @@ body {
 /* Bus Stop Marker */
 
 .pin-bus-stop {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   text-align: center;
   border-radius: 50%;
   background: orange;
@@ -269,6 +269,9 @@ body {
   transform: rotate(-45deg);
   /*margin: -20px 0 0 -20px; */
   cursor: pointer;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 0.75);
 }
 
 .pin-bus-stop > i {
@@ -277,7 +280,8 @@ body {
   -o-transform:  rotate(50deg) ;
   -ms-transform: rotate(50deg) ;
   transform: rotate(50deg) ;
-  padding:2px;
+  padding: 4px;
+  color:white;
 }
 
 
@@ -504,4 +508,32 @@ body {
   background:white;
   height:100%;
   display: none;
+}
+
+
+/* Modal Css */
+.info-modal h2 {
+  background: #2196F3;
+}
+
+
+.info-modal h2, .error-modal h2 {
+  padding: 20px;
+  margin-bottom:10px;
+  margin:0;
+  color:white;
+  font-weight: bold;
+}
+
+.error-modal h2 {
+  background: #F44336;
+}
+
+.info-modal p {
+  padding: 20px;
+  font-size: 1.5em;
+}
+
+.tingle-modal-box__content {
+  padding: 0px !important;
 }
