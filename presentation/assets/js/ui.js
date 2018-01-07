@@ -1,14 +1,10 @@
 var UI = function() {
   
   var _initalize = function() {
-   // _shouldDisplayElement('#trip-info-container', false);
     this.searchForm = document.getElementById('search-container')
   
     var _this = this;
 
-    //this.faye_client = faye_client;
-
-   
 
     this.searchForm.onsubmit = function(e){
       e.preventDefault();
@@ -32,27 +28,17 @@ var UI = function() {
     }, function(error) {
       //handle failure here.
       //add modal or message at the bottom UI here - TODO
-      alert("ERROR: " + User.getErrorMessage(error));
+      openMessageModal("User Location Error", User.getErrorMessage(error), 'error');
+      
     });
-
-    /*$("#hamburger-menu a").toggle(function(e) {
-     // e.preventDefault();
-      var sidebar = $("#side-menu-container");
-
-      sidebar.css({"left":"2000px"}).animate({"left":"0px"}, "slow"); 
-
-      return false;
-    }); */
-
-   
    
   }
 
   var _clearSearchResults = function() {
-    
+    var searchInput = document.getElementById('search-input');
+    searchInput.value = "";
     if(Map.hasLines()){
-      var searchInput = document.getElementById('search-input');
-      searchInput.value = "";
+     
       _shouldDisplayElement('#trip-info-container', false);
       _shouldDisplayElement('#search-cancel', false);
 
@@ -85,10 +71,8 @@ var UI = function() {
       _shouldDisplayElement('#search-cancel', true);
     }
 
-    console.log("change");
+    
   };
-
-
   
   /*
     Options:
@@ -181,8 +165,6 @@ var UI = function() {
     // open modal
     modal.open();
 
-    // close modal
-   // modal.close();
           
   };
 
@@ -214,15 +196,13 @@ var UI = function() {
       city: city,
       route: route,
       success: function(data){
-        //var new_plate_numbers = _.pluck(buses, 'plate_numb');
         var busMarkers = Map.busMarkers;
-        console.log("Bus Markers: ");
-        console.log(busMarkers);
+        
         buses = JSON.parse(data);
 
         if(busMarkers.length > 0){
           _.each(buses.positions, function(bus,i){
-            console.log("updating bus location..");
+            
             Map.updateBusLocation(bus.plate_numb.toString(), bus.coordinates);
           })
         } else {
@@ -245,7 +225,7 @@ var UI = function() {
 
   var renderGeocodeAddress = function(result){
     if(result.length > 0) {
-      console.log(result);
+     
       var data = result[0];
       var location = data.geometry.location;
 
@@ -262,8 +242,7 @@ var UI = function() {
           
 
           if(!_.isUndefined(userCoords)){
-            
-            //get top 3 nearest stops to user which are in the same subroute as destination
+           
 
             Service.search({
               start: [userCoords.lat,userCoords.lng],
@@ -271,7 +250,7 @@ var UI = function() {
             }).then(function(data){
               data = data.possibleways;
               
-              if(data.length > 0){ //This will give an error if data is not an array - TODO
+              if(data.length > 0){ 
                 
                 // Draw things in the map
                 var route = data[0];
@@ -327,21 +306,24 @@ var UI = function() {
               } else {
                 //Handle no routes found error - TODO
 
+                openMessageModal("Search not found", "We couldn't find any routes for your search request", "info");
+
               }
             }, function(error){
-              //Handle error with UI - TODO
-              console.log(error);
+              
+              openMessageModal("An error occured", error, 'error');
             });
             
            
           } else {
             //show some UI error message. 
+            openMessageModal('User Location Error', "We couldn't find your current location. Hint: refresh the page", 'error');
           }
 
          
 
         } else {
-          console.log("Could not find place details");
+          openMessageModal("Place details", "We could not find the information of your destination. Hint: refresh the page", 'info');
         }
       });
 
@@ -351,7 +333,7 @@ var UI = function() {
     
 
     } else {
-      alert("No location found!");
+      openMessageModal("Location not found", "We could not find the location. Hint: try again or refresh the page", 'error');
     }
   }
 
@@ -363,7 +345,7 @@ var UI = function() {
   var updateTripDetails = function(data){
     var trip_duration = document.getElementById('trip-duration');
     trip_duration.innerHTML = data.bus_duration;
-    console.log("Distance: "+ data.bus_distance);
+    
     var trip_distance = document.getElementById('trip-distance');
     trip_distance.innerHTML = data.bus_distance;
   };

@@ -15,7 +15,7 @@ var Map = function() {
 
 
     this.map.on('load', function () {
-      console.log("Map loaded");
+     
       UI.shouldDisplayElement("#loading_screen", false);
     });
 
@@ -79,6 +79,8 @@ var Map = function() {
       markerElem: markerType
     });  
 
+    
+
     this.busStopMarkers.push(marker);
   };
 
@@ -91,9 +93,10 @@ var Map = function() {
       markerElem: markerType
     });  
 
+    marker.togglePopup();
+
     this.busMarkers.push({id: data.plate_numb, marker: marker});
    
-    
   };
   
   
@@ -225,7 +228,7 @@ var Map = function() {
 
       if(_.isUndefined(options.id) || _.isUndefined(options.geoJson)){
         options.errorCallback();
-        console.log("Some error");
+       
       } else {
         var type = '';
         var paint  = undefined;

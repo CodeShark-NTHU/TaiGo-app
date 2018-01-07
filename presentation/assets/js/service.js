@@ -2,12 +2,12 @@ var Service = function() {
   var _initialize = function(apiUrl, version){
     this.apiUrl = apiUrl;
     this.apiVersion = version;
-    console.log(apiUrl);
+   
     this.fayeClient = new Faye.Client(apiUrl + "faye");
     this.fayeClient.disable('websocket');
     this.fayeClient.disable('eventsource');
     this.subscribe = undefined;
-    console.log(this.fayeClient);
+    
   };
 
   /*
@@ -25,7 +25,6 @@ var Service = function() {
     
     _fetch(url).then(function(res) {
       var channel_id = res.message[0].id;
-      console.log("Channel ID: " + channel_id);
         _this.subscribe = _this.fayeClient.subscribe('/' + channel_id, options.success);
 
       _this.subscribe.then(function() {
