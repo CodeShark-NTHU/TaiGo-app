@@ -212,8 +212,21 @@ var UI = function() {
     Service.listenToBusPositions({
       city: city,
       route: route,
-      success: function(data){
-        
+      success: function(buses){
+        /*var new_plate_numbers = _.pluck(buses, 'plate_numb');
+        var current_plate_numbers = Map.busMarkers;
+
+        if(current_plate_numbers != undefined){
+
+        } else {
+          //I think this will run only ones
+          _.each(buses, function(bus,i){
+            Map.addBusmarker(bus);
+          })
+        } */
+
+        console.log(buses);
+       
       },
       failure: function(err){
         console.log("Error: " + err);
@@ -252,17 +265,17 @@ var UI = function() {
               if(data.length > 0){ //This will give an error if data is not an array - TODO
                 
                 // Draw things in the map
-                _.each(_.chain(data).reverse().value(), function(v,i,l){
+                var route = data[0];
 
-                  var walking_steps = v.walking_steps;
-                  var bus_steps = v.bus_steps;
+                  var walking_steps = route.walking_steps;
+                  var bus_steps = route.bus_steps;
                  
-                  var color = ''
-                    if(i == (data.length - 1)){
+                 // var color = ''
+                   // if(i == (data.length - 1)){
                       color = '#2196F3';
-                    }else {
-                      color = Factory.hex2rgb('#616161', 0.5).css;
-                    }
+                   // }else {
+                      //color = Factory.hex2rgb('#616161', 0.5).css;
+                    //}
 
                   //draw the walking path(s)
                   drawWalkingPath(color, walking_steps);
@@ -311,7 +324,7 @@ var UI = function() {
 
 
 
-                });
+               
 
                
               } else {

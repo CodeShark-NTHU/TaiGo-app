@@ -11,7 +11,7 @@ form#search-container
     .col.s10#main-search
       input#search-input name="search_input" type="search" onkeyup="UI.searchInputActions()" class="search-input browser-default"  placeholder="Search here"
     .col.s1#search-cancel
-      a href="javascript:" onclick="UI.clearSearchResults()"
+      a#cancel-btn href="javascript:" onclick="UI.clearSearchResults()"
         i class="material-icons"
           = "clear"
 

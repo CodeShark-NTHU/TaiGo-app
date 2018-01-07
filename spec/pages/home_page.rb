@@ -5,11 +5,14 @@ class HomePage
 
   page_url TaiGo::App.config.APP_URL
 
-  div(:warning_message, id: 'flash_bar_danger')
-  div(:success_message, id: 'flash_bar_success')
+  div(:map, id: 'map')
+  div(:loading_screen, id: 'loading_screen')
+  form(:search_input, id: 'search-input')
+  a(:cancel_btn, id: 'cancel-btn')
+  div(:trip_info_container, id: 'trip-info-container')
+  h4(:place_title, id: 'place-title')
 
-  h1(:title_heading, id: 'main_header')
-  text_field(:url_input, id: 'url_input')
-  button(:add_button, id: 'repo_form_submit')
+  i(:trip_duration, id: 'trip-duration')
+  i(:trip_distance, id: 'trip-distance')
   
 end

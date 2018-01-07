@@ -16,16 +16,32 @@ describe 'Homepage' do
     @headless.destroy
   end
 
+ 
+
   describe 'Empty Homepage' do
     include PageObject::PageFactory
-    it '(HAPPY) should see only a map loaded' do
-      # GIVEN: user is on the home page without any projects
+
+    it '(HAPPY) should  see a loading screen' do
       visit HomePage do |page|
+        _(page.loading_screen.visible?).must_equal true
+      end
+    end
+    
+  
+
+    it '(HAPPY) should see only a map loaded' do
+      # GIVEN: the map loaded already
+      visit HomePage do |page|
+
+       # before do
+          #@browser.wait_until { _(page.loading_screen.visible?).must_equal false}
+        #end
+        # WAIT: Until the loading screen disappears 
+        _(page.map).wait_until_present
         # THEN: user should see a map, the position you're right now, and search bar
-        _(page.title_heading).must_equal 'TaiGo'
-        _(page.url_input_element.visible?).must_equal true
-        _(page.add_button_element.visible?).must_equal true
-        _(page.repos_table_element.exists?).must_equal false
+        _(page.map.visible?).must_equal true
+        _(page.map.visible?).must_equal true
+        _(page.search_input.visible?).must_equal true
       end
     end
   end
@@ -50,5 +66,5 @@ describe 'Homepage' do
   #       )
   #     end
   #   end
-  end
+  #end
 end
