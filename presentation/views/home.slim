@@ -3,14 +3,14 @@ div id="map"
 
 form#search-container
   .row
-    .col.s1#hamburger-menu
+    /.col.s1#hamburger-menu
       a href="#"
         
         i class="material-icons"
           = "menu"
     .col.s10#main-search
       input#search-input name="search_input" type="search" onkeyup="UI.searchInputActions()" class="search-input browser-default"  placeholder="Search here"
-    .col.s1#search-cancel
+    .col.s2#search-cancel
       a#cancel-btn href="javascript:" onclick="UI.clearSearchResults()"
         i class="material-icons"
           = "clear"

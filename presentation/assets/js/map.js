@@ -38,11 +38,38 @@ var Map = function() {
    
   };
 
+  var _findBusMarkerIndex = function(id){
+    var ids = _.pluck(this.busMarkers, 'id');
+    return _.indexOf(ids, id);
+  }
+
+  var _busMarkerExists = function(id){
+    return this._findBusMarkerIndex(id) != -1;
+  }
+
+  var _updateBusLocation = function(id, coordinates) {
+    var result = this.findBusMarkerIndex(id);
+
+    if(result != -1) {
+      this.busMarkers[result].marker.setLngLat([coordinates.longitude, coordinates.latitude]);    
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   var _removeAllBusStops = function() {
     _.each(this.busStopMarkers, function(marker, i){
       marker.remove();
     });
     this.busStopMarkers = [];
+  };
+
+  var _removeAllBuses = function() {
+    _.each(this.busMarkers, function(v, i){
+      v.marker.remove();
+    });
+    this.busMarkers = [];
   };
 
   var _addBusStopMarker = function(coords, markerType, popup){
@@ -56,15 +83,17 @@ var Map = function() {
   };
 
   var _addBusMarker = function(data, markerType, popup){
-    
-    coordinates = [data.coordinates.longitude, data.coordinates.latitude ]
+  
+    coordinates = [data.coordinates.longitude, data.coordinates.latitude]
     var marker = this.addMarker({
       coord: coordinates,
       popupTemplate: popup,
       markerElem: markerType
     });  
 
-    this.busStopMarkers.push({id: data.plate_numb, marker: marker});
+    this.busMarkers.push({id: data.plate_numb, marker: marker});
+   
+    
   };
   
   
@@ -309,10 +338,14 @@ var Map = function() {
     removeLine: _removeLine,
     removeAllLines: _removeAllLines,
     removeAllBusStops: _removeAllBusStops,
+    removeAllBuses: _removeAllBuses,
     fitCurrentBounds: _fitCurrentBounds,
     addBusStopMarker: _addBusStopMarker,
     hasLines: _hasLines,
-    addBusMarker: _addBusMarker
+    addBusMarker: _addBusMarker,
+    updateBusLocation: _updateBusLocation,
+    findBusMarkerIndex: _findBusMarkerIndex,
+    busMarkerExists: _busMarkerExists
   };
 
 }();

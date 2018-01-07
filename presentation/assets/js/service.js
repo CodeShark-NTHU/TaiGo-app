@@ -22,7 +22,7 @@ var Service = function() {
     _.defaults(options, {fetchFailure: (error) => {} , subscribeFailure: (error) => {} });
     var _this = this;
     var url = this.apiUrl + "api/" + this.apiVersion + "/positions/" + options.city + "/" + options.route;
-    console.log("ABout to fetch the channel id: ");
+    
     _fetch(url).then(function(res) {
       var channel_id = res.message[0].id;
       console.log("Channel ID: " + channel_id);

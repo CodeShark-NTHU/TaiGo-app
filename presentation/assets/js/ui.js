@@ -62,6 +62,7 @@ var UI = function() {
       Map.destMarker = undefined;
 
       Map.removeAllBusStops();
+      Map.removeAllBuses();
 
       //remove all markers. - TODO
       Map.removeAllLines();
@@ -212,20 +213,28 @@ var UI = function() {
     Service.listenToBusPositions({
       city: city,
       route: route,
-      success: function(buses){
-        /*var new_plate_numbers = _.pluck(buses, 'plate_numb');
-        var current_plate_numbers = Map.busMarkers;
+      success: function(data){
+        //var new_plate_numbers = _.pluck(buses, 'plate_numb');
+        var busMarkers = Map.busMarkers;
+        console.log("Bus Markers: ");
+        console.log(busMarkers);
+        buses = JSON.parse(data);
 
-        if(current_plate_numbers != undefined){
-
-        } else {
-          //I think this will run only ones
-          _.each(buses, function(bus,i){
-            Map.addBusmarker(bus);
+        if(busMarkers.length > 0){
+          _.each(buses.positions, function(bus,i){
+            console.log("updating bus location..");
+            Map.updateBusLocation(bus.plate_numb.toString(), bus.coordinates);
           })
-        } */
+        } else {
+          
+          _.each(buses.positions, function(bus,i){
+            
+            var popup =  generatePopupTemplate({title: bus.plate_numb});
+            Map.addBusMarker(bus, _createBusMarkerElem(), popup);
+          });
+        } 
 
-        console.log(buses);
+       
        
       },
       failure: function(err){
