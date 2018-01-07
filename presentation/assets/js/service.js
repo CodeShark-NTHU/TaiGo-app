@@ -15,10 +15,11 @@ var Service = function() {
       @city: string
       @route: string
       @success: function(data: json)
-      @failure: function(error: string) [optional]
+      @fetchFailure: function(error: string) [optional]
+      @subscribeFailure: function(error: string) [optional]
   */
   var _listenToBusPositions = function(options){
-    _.defaults(options, {failure: (error) => {} });
+    _.defaults(options, {fetchFailure: (error) => {} , subscribeFailure: (error) => {} });
     var _this = this;
     var url = this.apiUrl + "api/" + this.apiVersion + "/positions/" + options.city + "/" + options.route;
     console.log("ABout to fetch the channel id: ");
@@ -32,8 +33,8 @@ var Service = function() {
 
       _this.subscribe.then(function() {
         console.log('Subscription is now active!: ');
-      });
-    }, options.failure);
+      }, options.subscribeFailure);
+    }, options.fetchFailure);
   };
 
   var _unsubscribeToBusPositions = function(){
