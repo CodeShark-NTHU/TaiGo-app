@@ -12,6 +12,13 @@ var Map = function() {
       zoom: defaultZoom
     });
 
+
+
+    this.map.on('load', function () {
+      console.log("Map loaded");
+      UI.shouldDisplayElement(".loading_screen", false);
+    });
+
     // Configure and Add Map Navigation Controls
     var nav = new mapboxgl.NavigationControl();
     this.map.addControl(nav, 'top-left');
@@ -24,6 +31,9 @@ var Map = function() {
     this.destMarker = undefined;
     this.busStopMarkers = [];
     this.mapLines = [];
+
+
+
    
   };
 

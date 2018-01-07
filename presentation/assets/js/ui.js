@@ -6,6 +6,10 @@ var UI = function() {
   
     var _this = this;
 
+    //this.faye_client = faye_client;
+
+   
+
     this.searchForm.onsubmit = function(e){
       e.preventDefault();
       _this.clearSearchResults();
@@ -184,14 +188,33 @@ var UI = function() {
       var sub_route_info = stop_details.sub_route;
   
       var coordinates = [stop_info.coordinates.longitude, stop_info.coordinates.latitude];
-      console.log(coordinates);
       var sub_route_name = sub_route_info.name.english;
       var stop_name = stop_info.name.english;
+
+      if(_.isUndefined(stop_name) || stop_name == ""){
+        stop_name = stop_info.name.chinese;
+      }
 
       var popup = generatePopupTemplate({title: stop_name});
 
       Map.addBusStopMarker(coordinates,createBusStopMarkerElem(), popup);
 
+    });
+  };
+
+
+  var renderBuses = function(city, route){
+    var _this = this;
+    Service.listenToBusPositions({
+      city: city,
+      route: route,
+      success: function(data){
+        console.log("Data...: ");
+        console.log(data);
+      },
+      failure: function(err){
+        console.log("Error: " + err);
+      }
     });
   };
 
@@ -210,6 +233,7 @@ var UI = function() {
           Map.setDestinationMarker( [location.lng(),location.lat()], popup, _createBusMarkerElem());
 
           var userCoords = User.getUserLocation();
+           
           
 
           if(!_.isUndefined(userCoords)){
@@ -253,15 +277,23 @@ var UI = function() {
                     });
 
                     //add the stops of routes
-
                     var stops_of_sub_routes = v.sub_routes; 
-                    console.log(stops_of_sub_routes);
+                    
                     _.each(stops_of_sub_routes, function(sub_route,j){
                       var stops = sub_route.stops_of_sub_route;
 
                       renderBusStops(stops)
-                      
+
                     });
+                    
+
+                    var route_name = v.sub_routes[0].sub_route_name_ch;
+                    var city_name = v.sub_routes[0].stops_of_sub_route[0].stop.city_name;
+
+                    
+
+                    //show real-time buses
+                    renderBuses(city_name, route_name);
 
                   });
 
@@ -273,6 +305,8 @@ var UI = function() {
                     //display trip info
                     _shouldDisplayElement('#trip-info-container', true);
                   }
+
+
 
                 });
 
@@ -316,6 +350,9 @@ var UI = function() {
   var updateTripDetails = function(data){
     var trip_duration = document.getElementById('trip-duration');
     trip_duration.innerHTML = data.bus_duration;
+    console.log("Distance: "+ data.bus_distance);
+    var trip_distance = document.getElementById('trip-distance');
+    trip_distance.innerHTML = data.bus_distance;
   };
   
   return {
