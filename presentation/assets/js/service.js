@@ -26,10 +26,7 @@ var Service = function() {
     _fetch(url).then(function(res) {
       var channel_id = res.message[0].id;
       console.log("Channel ID: " + channel_id);
-        _this.subscribe = _this.fayeClient.subscribe('/' + channel_id, function(data){
-        console.log("Data: ");
-        console.log(data);
-      });
+        _this.subscribe = _this.fayeClient.subscribe('/' + channel_id, options.success);
 
       _this.subscribe.then(function() {
         console.log('Subscription is now active!: ');
@@ -41,9 +38,8 @@ var Service = function() {
     if(this.subscribe != undefined) {
       this.subscribe.cancel();
       this.subscribe = undefined;
+      console.log("unsubscribed");
     }
-      
-    
   }
 
   var _fetch = function(url) {
@@ -83,6 +79,5 @@ var Service = function() {
   };
 }();
 
-document.addEventListener("unload", function() {
-  Service.unsubscribeToBusPositions();
-});
+
+

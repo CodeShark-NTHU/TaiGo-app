@@ -54,6 +54,7 @@ var UI = function() {
       var searchInput = document.getElementById('search-input');
       searchInput.value = "";
       _shouldDisplayElement('#trip-info-container', false);
+      _shouldDisplayElement('#search-cancel', false);
 
 
       //remove dest marker - TODO - maybe add this as a function of Map.js?
@@ -64,6 +65,9 @@ var UI = function() {
 
       //remove all markers. - TODO
       Map.removeAllLines();
+
+
+      Service.unsubscribeToBusPositions();
     }
 
   };
@@ -209,8 +213,7 @@ var UI = function() {
       city: city,
       route: route,
       success: function(data){
-        console.log("Data...: ");
-        console.log(data);
+        
       },
       failure: function(err){
         console.log("Error: " + err);

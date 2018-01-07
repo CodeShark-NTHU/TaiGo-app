@@ -32,7 +32,7 @@ html
    
     
    
-  body
+  body 
     == yield
     
     script src="https://use.fontawesome.com/9a4e9e01de.js"
@@ -58,3 +58,4 @@ html
     
     == assets(:js)
     
+    //window.onbeforeunload = Service.unsubscribeToBusPositions();

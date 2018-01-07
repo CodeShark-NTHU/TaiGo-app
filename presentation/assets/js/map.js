@@ -31,6 +31,7 @@ var Map = function() {
     this.destMarker = undefined;
     this.busStopMarkers = [];
     this.mapLines = [];
+    this.busMarkers = [];
 
 
 
@@ -53,6 +54,19 @@ var Map = function() {
 
     this.busStopMarkers.push(marker);
   };
+
+  var _addBusMarker = function(data, markerType, popup){
+    
+    coordinates = [data.coordinates.longitude, data.coordinates.latitude ]
+    var marker = this.addMarker({
+      coord: coordinates,
+      popupTemplate: popup,
+      markerElem: markerType
+    });  
+
+    this.busStopMarkers.push({id: data.plate_numb, marker: marker});
+  };
+  
   
   var _setUserMarker = function(userCoords, markerType, popup) {
     if(_.isUndefined(this.userMarker)) {
@@ -297,7 +311,8 @@ var Map = function() {
     removeAllBusStops: _removeAllBusStops,
     fitCurrentBounds: _fitCurrentBounds,
     addBusStopMarker: _addBusStopMarker,
-    hasLines: _hasLines
+    hasLines: _hasLines,
+    addBusMarker: _addBusMarker
   };
 
 }();
