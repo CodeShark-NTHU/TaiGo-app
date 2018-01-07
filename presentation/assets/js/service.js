@@ -4,6 +4,9 @@ var Service = function() {
     this.apiVersion = version;
     console.log(apiUrl);
     this.fayeClient = new Faye.Client(apiUrl + "faye");
+    this.fayeClient.disable('websocket');
+    this.fayeClient.disable('eventsource');
+    this.subscribe = undefined;
     console.log(this.fayeClient);
   };
 
@@ -22,13 +25,25 @@ var Service = function() {
     _fetch(url).then(function(res) {
       var channel_id = res.message[0].id;
       console.log("Channel ID: " + channel_id);
-      var sub = _this.fayeClient.subscribe('/' + channel_id, options.callback);
+        _this.subscribe = _this.fayeClient.subscribe('/' + channel_id, function(data){
+        console.log("Data: ");
+        console.log(data);
+      });
 
-      sub.then(function() {
-        alert('Subscription is now active!');
+      _this.subscribe.then(function() {
+        console.log('Subscription is now active!: ');
       });
     }, options.failure);
   };
+
+  var _unsubscribeToBusPositions = function(){
+    if(this.subscribe != undefined) {
+      this.subscribe.cancel();
+      this.subscribe = undefined;
+    }
+      
+    
+  }
 
   var _fetch = function(url) {
     return new Promise((resolve, reject) => {
@@ -62,6 +77,11 @@ var Service = function() {
   return {
     init: _initialize,
     search: _search,
-    listenToBusPositions: _listenToBusPositions
+    listenToBusPositions: _listenToBusPositions,
+    unsubscribeToBusPositions: _unsubscribeToBusPositions
   };
 }();
+
+document.addEventListener("unload", function() {
+  Service.unsubscribeToBusPositions();
+});
