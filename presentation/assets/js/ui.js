@@ -269,13 +269,7 @@ var UI = function() {
 
                   var walking_steps = route.walking_steps;
                   var bus_steps = route.bus_steps;
-                 
-                 // var color = ''
-                   // if(i == (data.length - 1)){
-                      color = '#2196F3';
-                   // }else {
-                      //color = Factory.hex2rgb('#616161', 0.5).css;
-                    //}
+                  var color = "#03A9F4";
 
                   //draw the walking path(s)
                   drawWalkingPath(color, walking_steps);
@@ -313,20 +307,14 @@ var UI = function() {
 
                   });
 
-                  if(i == (data.length - 1)){
-                    Map.fitCurrentBounds();
-                    //update place title
-                    _updatePlaceNameTitle(place.name);
-                    updateTripDetails(bus_steps[data.length - 1]);
-                    //display trip info
-                    _shouldDisplayElement('#trip-info-container', true);
-                  }
-
-
-
-               
-
-               
+                 
+                  Map.fitCurrentBounds();
+                  //update place title
+                  _updatePlaceNameTitle(place.name);
+                  updateTripDetails(bus_steps[data.length - 1]);
+                  //display trip info
+                  _shouldDisplayElement('#trip-info-container', true);
+                  
               } else {
                 //Handle no routes found error - TODO
 

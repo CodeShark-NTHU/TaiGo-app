@@ -4,7 +4,7 @@ class HomePage
   include PageObject
 
   page_url TaiGo::App.config.APP_URL
-
+  body(:page_body, :id => 'body')
   div(:map, :id => 'map')
   div(:loading_screen, :id => 'loading_screen')
   text_field(:search_input, :id => 'search-input')
