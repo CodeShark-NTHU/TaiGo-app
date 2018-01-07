@@ -8,12 +8,15 @@ describe 'Homepage' do
       # TaiGo::ApiGateway.new.delete_all_repos #should we makesure to update the data first?
       @headless = Headless.new
       @browser = Watir::Browser.new
+
+      Watir.relaxed_locate = true
     end
   end
 
   after do
     @browser.close
     @headless.destroy
+   
   end
 
  
@@ -23,8 +26,9 @@ describe 'Homepage' do
 
     it '(HAPPY) should  see a loading screen' do
       visit HomePage do |page|
-        _(page.loading_screen.visible?).must_equal true
+        _(page.loading_screen_element.visible?).must_equal true
       end
+
     end
     
   
@@ -33,15 +37,15 @@ describe 'Homepage' do
       # GIVEN: the map loaded already
       visit HomePage do |page|
 
-       # before do
-          #@browser.wait_until { _(page.loading_screen.visible?).must_equal false}
-        #end
+        Watir::Wait.until { _(page.loading_screen_element.visible?).must_equal false }
+         
+        
         # WAIT: Until the loading screen disappears 
-        _(page.map).wait_until_present
+        
         # THEN: user should see a map, the position you're right now, and search bar
-        _(page.map.visible?).must_equal true
-        _(page.map.visible?).must_equal true
-        _(page.search_input.visible?).must_equal true
+        #_(page.map_element.visible?).must_equal true
+        _(page.map_element.visible?).must_equal true
+        _(page.search_input_element.visible?).must_equal true
       end
     end
   end

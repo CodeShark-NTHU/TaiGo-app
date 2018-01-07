@@ -29,10 +29,14 @@ group :test do
   gem 'minitest'
   gem 'minitest-rg'
   gem 'rack-test'
-
+  #gem 'selenium-webdriver'
+  
   gem 'headless'
-  gem 'page-object'
-  gem 'watir'
+  #gem 'page-object'
+  gem 'page-object', '~> 2.2'
+  #gem 'watir'
+  gem 'watir', '~> 6.8'
+ 
 end
 
 group :development, :test do
@@ -41,4 +45,5 @@ group :development, :test do
   gem 'flog'
   gem 'reek'
   gem 'rubocop'
+  
 end

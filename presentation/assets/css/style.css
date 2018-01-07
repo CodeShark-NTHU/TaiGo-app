@@ -550,7 +550,7 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
-.loading_screen {
+#loading_screen {
   position: absolute;
   z-index:1000;
   background:white;

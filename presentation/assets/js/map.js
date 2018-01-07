@@ -16,7 +16,7 @@ var Map = function() {
 
     this.map.on('load', function () {
       console.log("Map loaded");
-      UI.shouldDisplayElement(".loading_screen", false);
+      UI.shouldDisplayElement("#loading_screen", false);
     });
 
     // Configure and Add Map Navigation Controls
