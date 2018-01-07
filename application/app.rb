@@ -20,8 +20,8 @@ module TaiGo
       routing.public
       app = App
 
-      api_domain = app.config.api_domain
-      api_version = app.config.api_version
+      api_domain = app.config.APP_URL
+      api_version = app.config.APP_VERSION
 
       # GET / request
       routing.root do
