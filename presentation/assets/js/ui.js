@@ -8,7 +8,7 @@ var UI = function() {
 
     this.searchForm.onsubmit = function(e){
       e.preventDefault();
-      _this.clearSearchResults();
+      _this.clearSearchResults(false);
       var address = _this.searchForm.search_input.value;
       Map.geocodeAddress(address, function(result){
         renderGeocodeAddress(result);
@@ -34,11 +34,16 @@ var UI = function() {
    
   }
 
-  var _clearSearchResults = function() {
-    var searchInput = document.getElementById('search-input');
-    searchInput.value = "";
-    if(Map.hasLines()){
+  var _clearSearchResults = function(removeText) {
+     var searchInput = document.getElementById('search-input');
+
+    if(removeText == true){
+      searchInput.value = "";
+    }
+
      
+    if(Map.hasLines()){
+      searchInput.value = "";
       _shouldDisplayElement('#trip-info-container', false);
       _shouldDisplayElement('#search-cancel', false);
 
@@ -310,7 +315,7 @@ var UI = function() {
 
               }
             }, function(error){
-              
+              //Handle error with UI - TODO
               openMessageModal("An error occured", error, 'error');
             });
             
